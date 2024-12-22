@@ -1,19 +1,62 @@
+// TODO:
+// - responsive design
+// - visual design
+// - add chord to book
+
+import { useState } from "react";
 import Chord from "@tombatossals/react-chords/lib/Chord";
 import guitar from "@tombatossals/chords-db/lib/guitar";
 import ukulele from "@tombatossals/chords-db/lib/ukulele";
-import { useState } from "react";
 
 type InstrumentName = "guitar" | "ukulele";
 const instruments: Record<InstrumentName, Instrument> = { ukulele, guitar };
+
+type InstrumentWithTunings = Instrument["main"] & {
+  tunings: Instrument["tunings"];
+};
+
+type ChordOptionsProps = {
+  chord: Chord;
+  instrumentWithTunings: InstrumentWithTunings;
+};
+const ChordOptions = ({ chord, instrumentWithTunings }: ChordOptionsProps) => {
+  const [index, setIndex] = useState(0);
+  return (
+    <div style={{ position: "relative" }}>
+      <button
+        style={{ position: "absolute", top: "45%", left: 10 }}
+        onClick={() => setIndex(index - 1)}
+        disabled={index <= 0}
+      >
+        prev
+      </button>
+      <Chord
+        chord={chord.positions[index]}
+        instrument={instrumentWithTunings}
+        lite
+      />
+      <button
+        style={{ position: "absolute", top: "45%", right: 10 }}
+        onClick={() => setIndex(index + 1)}
+        disabled={index >= chord.positions.length - 1}
+      >
+        next
+      </button>
+    </div>
+  );
+};
 
 function App() {
   const [instrumentName, setInstrumentName] =
     useState<InstrumentName>("ukulele");
   const selectedInstrument = instruments[instrumentName];
 
-  const instrumentWithTunings = Object.assign(selectedInstrument.main, {
-    tunings: selectedInstrument.tunings,
-  });
+  const instrumentWithTunings: InstrumentWithTunings = Object.assign(
+    selectedInstrument.main,
+    {
+      tunings: selectedInstrument.tunings,
+    }
+  );
   const [root, setRoot] = useState("C");
   const selectedChords = selectedInstrument.chords[root];
 
@@ -58,7 +101,7 @@ function App() {
       </div>
       {showAllChordTypes ? (
         <>
-          <div>
+          <div style={{ marginBottom: 10 }}>
             {selectedInstrument.suffixes.map((suffix: string) => (
               <button
                 key={suffix}
@@ -72,17 +115,19 @@ function App() {
             ))}
           </div>
           <button onClick={() => setShowAllChordTypes(false)}>
-            Hide Chords
+            Less Chord Types
           </button>
         </>
       ) : (
-        <button onClick={() => setShowAllChordTypes(true)}>Show Chords</button>
+        <button onClick={() => setShowAllChordTypes(true)}>
+          More Chord Types
+        </button>
       )}
-      <h2>{root}</h2>
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(5, auto)",
+          gridTemplateColumns: "repeat(6, 1fr)",
+          columnGap: 20,
         }}
       >
         {selectedChords
@@ -90,15 +135,16 @@ function App() {
           .map((chord) => {
             return (
               <div key={chord.key + chord.suffix}>
-                <h2>{chord.suffix}</h2>
-                {chord.positions.map((position, index) => (
-                  <Chord
-                    key={`position-${index}`}
-                    chord={position}
-                    instrument={instrumentWithTunings}
-                    lite={false}
-                  />
-                ))}
+                <h2 style={{ textAlign: "center" }}>
+                  {root}
+                  <span style={{ fontSize: 16, color: "grey" }}>
+                    {chord.suffix}
+                  </span>
+                </h2>
+                <ChordOptions
+                  chord={chord}
+                  instrumentWithTunings={instrumentWithTunings}
+                />
               </div>
             );
           })}
