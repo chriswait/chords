@@ -3,11 +3,14 @@ import guitar from "@tombatossals/chords-db/lib/guitar";
 import ukulele from "@tombatossals/chords-db/lib/ukulele";
 import { useState } from "react";
 
-const instruments = { ukulele, guitar };
+type InstrumentName = "guitar" | "ukulele";
+const instruments: Record<InstrumentName, Instrument> = { ukulele, guitar };
 
 function App() {
-  const [instrumentName, setInstrumentName] = useState("ukulele");
+  const [instrumentName, setInstrumentName] =
+    useState<InstrumentName>("ukulele");
   const selectedInstrument = instruments[instrumentName];
+
   const instrumentWithTunings = Object.assign(selectedInstrument.main, {
     tunings: selectedInstrument.tunings,
   });
@@ -26,19 +29,21 @@ function App() {
   return (
     <>
       <div style={{ marginBottom: 10 }}>
-        {Object.keys(instruments).map((eachInstrumentName) => (
-          <button
-            key={eachInstrumentName}
-            onClick={() => setInstrumentName(eachInstrumentName)}
-            style={
-              instrumentName === eachInstrumentName
-                ? { fontWeight: "bold" }
-                : {}
-            }
-          >
-            {eachInstrumentName}
-          </button>
-        ))}
+        {(Object.keys(instruments) as InstrumentName[]).map(
+          (eachInstrumentName) => (
+            <button
+              key={eachInstrumentName}
+              onClick={() => setInstrumentName(eachInstrumentName)}
+              style={
+                instrumentName === eachInstrumentName
+                  ? { fontWeight: "bold" }
+                  : {}
+              }
+            >
+              {eachInstrumentName}
+            </button>
+          )
+        )}
       </div>
       <div style={{ marginBottom: 10 }}>
         {selectedInstrument.keys.map((keyRoot: string) => (
