@@ -1,12 +1,15 @@
 // TODO:
-// - responsive design
 // - visual design
 // - add chord to book
+// - fix toggle chord types
 
 import { useState } from "react";
 import Chord from "@tombatossals/react-chords/lib/Chord";
 import guitar from "@tombatossals/chords-db/lib/guitar";
 import ukulele from "@tombatossals/chords-db/lib/ukulele";
+import useBreakpoint from "use-breakpoint";
+
+const BREAKPOINTS = { xs: 0, sm: 576, md: 768, lg: 992, xl: 1200, xxl: 1400 };
 
 type InstrumentName = "guitar" | "ukulele";
 const instruments: Record<InstrumentName, Instrument> = { ukulele, guitar };
@@ -47,6 +50,8 @@ const ChordOptions = ({ chord, instrumentWithTunings }: ChordOptionsProps) => {
 };
 
 function App() {
+  const { breakpoint } = useBreakpoint(BREAKPOINTS, "xl");
+
   const [instrumentName, setInstrumentName] =
     useState<InstrumentName>("ukulele");
   const selectedInstrument = instruments[instrumentName];
@@ -126,7 +131,17 @@ function App() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(6, 1fr)",
+          gridTemplateColumns: `repeat(${
+            breakpoint === "xs"
+              ? 1
+              : breakpoint === "sm"
+              ? 2
+              : breakpoint === "md"
+              ? 3
+              : breakpoint === "lg"
+              ? 4
+              : 6
+          }, 1fr)`,
           columnGap: 20,
         }}
       >
@@ -137,7 +152,7 @@ function App() {
               <div key={chord.key + chord.suffix}>
                 <h2 style={{ textAlign: "center" }}>
                   {root}
-                  <span style={{ fontSize: 16, color: "grey" }}>
+                  <span style={{ fontSize: 16, color: "#333333" }}>
                     {chord.suffix}
                   </span>
                 </h2>
