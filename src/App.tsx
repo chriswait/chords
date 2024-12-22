@@ -4,50 +4,16 @@
 // - fix toggle chord types
 
 import { useState } from "react";
-import Chord from "@tombatossals/react-chords/lib/Chord";
 import guitar from "@tombatossals/chords-db/lib/guitar";
 import ukulele from "@tombatossals/chords-db/lib/ukulele";
 import useBreakpoint from "use-breakpoint";
 
+import { InstrumentName, InstrumentWithTunings } from "./types";
+import ChordOptions from "./ChordOptions";
+
 const BREAKPOINTS = { xs: 0, sm: 576, md: 768, lg: 992, xl: 1200, xxl: 1400 };
 
-type InstrumentName = "guitar" | "ukulele";
 const instruments: Record<InstrumentName, Instrument> = { ukulele, guitar };
-
-type InstrumentWithTunings = Instrument["main"] & {
-  tunings: Instrument["tunings"];
-};
-
-type ChordOptionsProps = {
-  chord: Chord;
-  instrumentWithTunings: InstrumentWithTunings;
-};
-const ChordOptions = ({ chord, instrumentWithTunings }: ChordOptionsProps) => {
-  const [index, setIndex] = useState(0);
-  return (
-    <div style={{ position: "relative" }}>
-      <button
-        style={{ position: "absolute", top: "45%", left: 10 }}
-        onClick={() => setIndex(index - 1)}
-        disabled={index <= 0}
-      >
-        prev
-      </button>
-      <Chord
-        chord={chord.positions[index]}
-        instrument={instrumentWithTunings}
-        lite
-      />
-      <button
-        style={{ position: "absolute", top: "45%", right: 10 }}
-        onClick={() => setIndex(index + 1)}
-        disabled={index >= chord.positions.length - 1}
-      >
-        next
-      </button>
-    </div>
-  );
-};
 
 function App() {
   const { breakpoint } = useBreakpoint(BREAKPOINTS, "xl");
