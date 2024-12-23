@@ -6,9 +6,14 @@ import { InstrumentWithTunings } from "./types";
 type ChordOptionsProps = {
   chord: Chord;
   instrumentWithTunings: InstrumentWithTunings;
+  handleAddToBook: (chord: Chord, positionIndex: number) => void;
 };
 
-const ChordOptions = ({ chord, instrumentWithTunings }: ChordOptionsProps) => {
+const ChordOptions = ({
+  chord,
+  instrumentWithTunings,
+  handleAddToBook,
+}: ChordOptionsProps) => {
   const [index, setIndex] = useState(0);
   return (
     <div style={{ position: "relative" }}>
@@ -30,6 +35,17 @@ const ChordOptions = ({ chord, instrumentWithTunings }: ChordOptionsProps) => {
         disabled={index >= chord.positions.length - 1}
       >
         next
+      </button>
+      <button
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: "50%",
+          transform: "translateX(-50%)",
+        }}
+        onClick={() => handleAddToBook(chord, index)}
+      >
+        Add
       </button>
     </div>
   );
