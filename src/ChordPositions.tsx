@@ -3,17 +3,19 @@ import Chord from "@tombatossals/react-chords/lib/Chord";
 
 import { InstrumentWithTunings } from "./types";
 
-type ChordOptionsProps = {
+type ChordPositionsProps = {
   chord: Chord;
   instrumentWithTunings: InstrumentWithTunings;
   handleAddToBook: (chord: Chord, positionIndex: number) => void;
+  chordPositionIsInBook: (newChord: Chord, newPositionIndex: number) => boolean;
 };
 
-const ChordOptions = ({
+const ChordPositions = ({
   chord,
   instrumentWithTunings,
   handleAddToBook,
-}: ChordOptionsProps) => {
+  chordPositionIsInBook,
+}: ChordPositionsProps) => {
   const [index, setIndex] = useState(0);
   return (
     <div style={{ position: "relative" }}>
@@ -44,6 +46,7 @@ const ChordOptions = ({
           transform: "translateX(-50%)",
         }}
         onClick={() => handleAddToBook(chord, index)}
+        disabled={chordPositionIsInBook(chord, index)}
       >
         Add
       </button>
@@ -51,4 +54,4 @@ const ChordOptions = ({
   );
 };
 
-export default ChordOptions;
+export default ChordPositions;

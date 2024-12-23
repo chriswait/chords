@@ -9,7 +9,7 @@ import Chord from "@tombatossals/react-chords/lib/Chord";
 import useBreakpoint from "use-breakpoint";
 
 import { InstrumentName, InstrumentWithTunings } from "./types";
-import ChordOptions from "./ChordOptions";
+import ChordPositions from "./ChordPositions";
 import { titleCaseString } from "./util";
 
 const BREAKPOINTS = { xs: 0, sm: 576, md: 768, lg: 992, xl: 1200, xxl: 1400 };
@@ -64,7 +64,14 @@ function App() {
     { chord: Chord; positionIndex: number }[]
   >([]);
   const [showChordBook, setShowChordBook] = useState(false);
-  console.log(chordBook);
+  const chordPositionIsInBook = (newChord: Chord, newPositionIndex: number) => {
+    return !!chordBook.find(
+      ({ chord, positionIndex }) =>
+        chord.key === newChord.key &&
+        chord.suffix === newChord.suffix &&
+        positionIndex === newPositionIndex
+    );
+  };
 
   return (
     <>
@@ -168,12 +175,13 @@ function App() {
                       {chord.suffix}
                     </span>
                   </h2>
-                  <ChordOptions
+                  <ChordPositions
                     chord={chord}
                     instrumentWithTunings={instrumentWithTunings}
                     handleAddToBook={(chord, positionIndex) => {
                       setChordBook([...chordBook, { chord, positionIndex }]);
                     }}
+                    chordPositionIsInBook={chordPositionIsInBook}
                   />
                 </div>
               );
