@@ -2,6 +2,10 @@ import { useState } from "react";
 import Chord from "@tombatossals/react-chords/lib/Chord";
 
 import { InstrumentWithTunings } from "./types";
+import Left from "./assets/left.svg?react";
+import Right from "./assets/right.svg?react";
+import { ARROW_BUTTON_STYLE, SPACING } from "./util";
+import Button from "./Button";
 
 type ChordPositionsProps = {
   chord: Chord;
@@ -18,39 +22,43 @@ const ChordPositions = ({
 }: ChordPositionsProps) => {
   const [index, setIndex] = useState(0);
   return (
-    <div style={{ position: "relative" }}>
-      <button
-        style={{ position: "absolute", top: "45%", left: 10 }}
-        onClick={() => setIndex(index - 1)}
-        disabled={index <= 0}
-      >
-        prev
-      </button>
-      <Chord
-        chord={chord.positions[index]}
-        instrument={instrumentWithTunings}
-        lite
-      />
-      <button
-        style={{ position: "absolute", top: "45%", right: 10 }}
-        onClick={() => setIndex(index + 1)}
-        disabled={index >= chord.positions.length - 1}
-      >
-        next
-      </button>
-      <button
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: "50%",
-          transform: "translateX(-50%)",
-        }}
-        onClick={() => handleAddToBook(chord, index)}
-        disabled={chordPositionIsInBook(chord, index)}
-      >
-        Add
-      </button>
-    </div>
+    <>
+      <div style={{ position: "relative" }}>
+        <button
+          style={{
+            ...ARROW_BUTTON_STYLE,
+            left: SPACING / 2,
+          }}
+          onClick={() => setIndex(index - 1)}
+          disabled={index <= 0}
+        >
+          <Left />
+        </button>
+        <Chord
+          chord={chord.positions[index]}
+          instrument={instrumentWithTunings}
+          lite
+        />
+        <button
+          style={{
+            ...ARROW_BUTTON_STYLE,
+            right: SPACING,
+          }}
+          onClick={() => setIndex(index + 1)}
+          disabled={index >= chord.positions.length - 1}
+        >
+          <Right />
+        </button>
+      </div>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Button
+          onClick={() => handleAddToBook(chord, index)}
+          disabled={chordPositionIsInBook(chord, index)}
+        >
+          Add
+        </Button>
+      </div>
+    </>
   );
 };
 

@@ -1,7 +1,3 @@
-// TODO:
-// - visual design
-// - add chord to book
-
 import { useState } from "react";
 import guitar from "@tombatossals/chords-db/lib/guitar";
 import ukulele from "@tombatossals/chords-db/lib/ukulele";
@@ -10,7 +6,8 @@ import useBreakpoint from "use-breakpoint";
 
 import { InstrumentName, InstrumentWithTunings } from "./types";
 import ChordPositions from "./ChordPositions";
-import { titleCaseString } from "./util";
+import Button from "./Button";
+import { CARD_STYLE, SPACING, titleCaseString } from "./util";
 
 const BREAKPOINTS = { xs: 0, sm: 576, md: 768, lg: 992, xl: 1200, xxl: 1400 };
 
@@ -23,6 +20,9 @@ const ChordsGrid = ({ children }: { children: React.ReactNode }) => {
   return (
     <div
       style={{
+        ...CARD_STYLE,
+        margin: SPACING * 2,
+        padding: SPACING * 2,
         display: "grid",
         gridTemplateColumns: `repeat(${
           breakpoint === "xs"
@@ -35,7 +35,7 @@ const ChordsGrid = ({ children }: { children: React.ReactNode }) => {
             ? 4
             : 6
         }, 1fr)`,
-        columnGap: 20,
+        gap: SPACING * 2,
       }}
     >
       {children}
@@ -75,70 +75,84 @@ function App() {
 
   return (
     <>
-      <button onClick={() => setShowChordBook(true)}>Show Book</button>
       <header
         style={{
-          display: "grid",
-          gridTemplateColumns: "120px auto",
-          gridTemplateRows: "repeat(3, auto)",
-          alignItems: "center",
-          gap: 10,
-          marginBottom: 40,
+          marginBottom: SPACING * 2,
+          padding: SPACING * 2,
         }}
       >
-        <h2>Instrument</h2>
-        <div
+        <Button
+          onClick={() => setShowChordBook(true)}
           style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 10,
+            marginBottom: SPACING,
+            position: "fixed",
+            right: 10,
+            top: 10,
           }}
         >
-          {(Object.keys(instruments) as InstrumentName[]).map(
-            (eachInstrumentName) => (
-              <button
-                key={eachInstrumentName}
-                onClick={() => setInstrumentName(eachInstrumentName)}
-                style={
-                  instrumentName === eachInstrumentName
-                    ? { fontWeight: "bold" }
-                    : {}
-                }
+          Show Book ({chordBook.length})
+        </Button>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "140px auto",
+            gridTemplateRows: "repeat(3, auto)",
+            alignItems: "center",
+            columnGap: 20,
+            rowGap: 26,
+          }}
+        >
+          <h2>Instrument</h2>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: SPACING,
+            }}
+          >
+            {(Object.keys(instruments) as InstrumentName[]).map(
+              (eachInstrumentName) => (
+                <Button
+                  key={eachInstrumentName}
+                  onClick={() => setInstrumentName(eachInstrumentName)}
+                  isSelected={instrumentName === eachInstrumentName}
+                >
+                  {titleCaseString(eachInstrumentName)}
+                </Button>
+              )
+            )}
+          </div>
+          <h2>Root</h2>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: SPACING,
+            }}
+          >
+            {selectedInstrument.keys.map((keyRoot: string) => (
+              <Button
+                key={keyRoot}
+                onClick={() => setRoot(keyRoot)}
+                isSelected={root === keyRoot}
               >
-                {titleCaseString(eachInstrumentName)}
-              </button>
-            )
-          )}
-        </div>
-        <h2>Root</h2>
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 10,
-          }}
-        >
-          {selectedInstrument.keys.map((keyRoot: string) => (
-            <button
-              key={keyRoot}
-              onClick={() => setRoot(keyRoot)}
-              style={root === keyRoot ? { fontWeight: "bold" } : {}}
-            >
-              {keyRoot}
-            </button>
-          ))}
-        </div>
-        <h2>Types</h2>
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 10,
-          }}
-        >
-          {(showAllChordTypes ? selectedInstrument.suffixes : chordTypes).map(
-            (suffix: string) => (
-              <button
+                {keyRoot}
+              </Button>
+            ))}
+          </div>
+          <h2>Types</h2>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: SPACING,
+            }}
+          >
+            {(showAllChordTypes
+              ? selectedInstrument.suffixes
+              : DEFAULT_CHORD_TYPES
+            ).map((suffix: string) => (
+              <Button
                 key={suffix}
                 onClick={() =>
                   setChordTypes(
@@ -147,19 +161,17 @@ function App() {
                       : [...chordTypes, suffix]
                   )
                 }
-                style={
-                  chordTypes.includes(suffix) ? { fontWeight: "bold" } : {}
-                }
+                isSelected={chordTypes.includes(suffix)}
               >
                 {suffix}
-              </button>
-            )
-          )}
-          {showAllChordTypes ? (
-            <button onClick={() => setShowAllChordTypes(false)}>Less</button>
-          ) : (
-            <button onClick={() => setShowAllChordTypes(true)}>More</button>
-          )}
+              </Button>
+            ))}
+            {showAllChordTypes ? (
+              <Button onClick={() => setShowAllChordTypes(false)}>Less</Button>
+            ) : (
+              <Button onClick={() => setShowAllChordTypes(true)}>More</Button>
+            )}
+          </div>
         </div>
       </header>
       <main>
@@ -168,12 +180,15 @@ function App() {
             .filter((chord) => chordTypes.includes(chord.suffix))
             .map((chord) => {
               return (
-                <div key={chord.key + chord.suffix}>
-                  <h2 style={{ textAlign: "center" }}>
+                <div
+                  key={chord.key + chord.suffix}
+                  style={{
+                    padding: SPACING,
+                  }}
+                >
+                  <h2 style={{ textAlign: "center", fontSize: 32 }}>
                     {chord.key}
-                    <span style={{ fontSize: 16, color: "#333333" }}>
-                      {chord.suffix}
-                    </span>
+                    <span style={{ fontSize: 20 }}>{chord.suffix}</span>
                   </h2>
                   <ChordPositions
                     chord={chord}
@@ -188,24 +203,34 @@ function App() {
             })}
         </ChordsGrid>
       </main>
-      <dialog open={showChordBook} style={{ top: 0, width: "100%" }}>
+      <dialog
+        open={showChordBook}
+        style={{ top: 0, width: "100%", height: "100vh" }}
+      >
         <h1>Chord Book</h1>
-        <button onClick={() => setShowChordBook(false)}>Close</button>
+        <Button
+          style={{
+            position: "absolute",
+            right: SPACING * 2,
+            top: SPACING * 2,
+          }}
+          onClick={() => setShowChordBook(false)}
+        >
+          Close
+        </Button>
         <ChordsGrid>
           {chordBook.map(({ chord, positionIndex }, index) => (
             <div key={`${chord.key}-${chord.suffix}-${positionIndex}-${index}`}>
               <h2 style={{ textAlign: "center" }}>
                 {chord.key}
-                <span style={{ fontSize: 16, color: "#333333" }}>
-                  {chord.suffix}
-                </span>
+                <span style={{ fontSize: 18 }}>{chord.suffix}</span>
               </h2>
               <Chord
                 chord={chord.positions[positionIndex]}
                 instrument={instrumentWithTunings}
                 lite
               />
-              <button
+              <Button
                 onClick={() =>
                   setChordBook(
                     chordBook.filter((_, bookIndex) => index !== bookIndex)
@@ -213,7 +238,7 @@ function App() {
                 }
               >
                 Remove
-              </button>
+              </Button>
             </div>
           ))}
         </ChordsGrid>
