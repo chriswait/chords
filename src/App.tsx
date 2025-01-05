@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import guitar from "@tombatossals/chords-db/lib/guitar";
 import ukulele from "@tombatossals/chords-db/lib/ukulele";
 import Chord from "@tombatossals/react-chords/lib/Chord";
@@ -12,6 +12,12 @@ import ChordsGrid from "./ChordsGrid";
 const instruments: Record<InstrumentName, Instrument> = { ukulele, guitar };
 
 const DEFAULT_CHORD_TYPES = ["major", "minor", "maj7", "7", "m7"];
+const ENHARMONICS: Record<string, string> = {
+  "C#": "Db",
+  Db: "C#",
+  "F#": "Gb",
+  Gb: "F#",
+};
 
 function App() {
   const [instrumentName, setInstrumentName] =
@@ -26,6 +32,12 @@ function App() {
   );
   const [root, setRoot] = useState("C");
   const rootReplaced = root.replace("#", "sharp");
+  useEffect(() => {
+    // When we change instruments, if the root doesn't exist swap for the enharmonic one
+    if (!Object.keys(selectedInstrument.chords).includes(rootReplaced)) {
+      setRoot(ENHARMONICS[root]);
+    }
+  }, [root, rootReplaced, selectedInstrument]);
   const selectedChords = selectedInstrument.chords[rootReplaced];
 
   const [showAllChordTypes, setShowAllChordTypes] = useState(false);
