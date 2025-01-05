@@ -1,25 +1,31 @@
+// Dialog Scrolling
+// Allow switching chord positions in chord book?
+// Drag+Drop into sections
+
 import { useEffect, useState } from "react";
 import guitar from "@tombatossals/chords-db/lib/guitar";
 import ukulele from "@tombatossals/chords-db/lib/ukulele";
 import Chord from "@tombatossals/react-chords/lib/Chord";
+import useBreakpoint from "use-breakpoint";
 
 import { InstrumentName, InstrumentWithTunings } from "./types";
 import ChordPositions from "./ChordPositions";
 import Button from "./Button";
-import { SPACING, titleCaseString } from "./util";
+import {
+  BREAKPOINTS,
+  DEFAULT_CHORD_TYPES,
+  ENHARMONICS,
+  HEADER_FLEX_STYLE,
+  SPACING,
+  titleCaseString,
+} from "./util";
 import ChordsGrid from "./ChordsGrid";
 
 const instruments: Record<InstrumentName, Instrument> = { ukulele, guitar };
 
-const DEFAULT_CHORD_TYPES = ["major", "minor", "maj7", "7", "m7"];
-const ENHARMONICS: Record<string, string> = {
-  "C#": "Db",
-  Db: "C#",
-  "F#": "Gb",
-  Gb: "F#",
-};
-
 function App() {
+  const { breakpoint } = useBreakpoint(BREAKPOINTS, "xl");
+
   const [instrumentName, setInstrumentName] =
     useState<InstrumentName>("ukulele");
   const selectedInstrument = instruments[instrumentName];
@@ -67,10 +73,12 @@ function App() {
         <Button
           onClick={() => setShowChordBook(true)}
           style={{
-            marginBottom: SPACING,
             position: "fixed",
-            right: 10,
-            top: 10,
+            right: SPACING,
+            zIndex: 1,
+            ...(breakpoint === "xs" || breakpoint === "sm"
+              ? { bottom: SPACING * 2 }
+              : { top: SPACING * 2 }),
           }}
         >
           Show Book ({chordBook.length})
@@ -78,19 +86,21 @@ function App() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "140px auto",
-            gridTemplateRows: "repeat(3, auto)",
-            alignItems: "center",
-            columnGap: 20,
-            rowGap: 26,
+            ...(breakpoint === "xs" || breakpoint === "sm"
+              ? { textAlign: "center", rowGap: SPACING * 2 }
+              : {
+                  gridTemplateColumns: "140px auto",
+                  gridTemplateRows: "repeat(3, auto)",
+                  alignItems: "flex-start",
+                  rowGap: SPACING * 3,
+                }),
+            columnGap: SPACING * 2,
           }}
         >
           <h2>Instrument</h2>
           <div
             style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: SPACING,
+              ...HEADER_FLEX_STYLE(breakpoint),
             }}
           >
             {(Object.keys(instruments) as InstrumentName[]).map(
@@ -108,9 +118,7 @@ function App() {
           <h2>Root</h2>
           <div
             style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: SPACING,
+              ...HEADER_FLEX_STYLE(breakpoint),
             }}
           >
             {selectedInstrument.keys.map((keyRoot: string) => (
@@ -126,9 +134,7 @@ function App() {
           <h2>Types</h2>
           <div
             style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: SPACING,
+              ...HEADER_FLEX_STYLE(breakpoint),
             }}
           >
             {(showAllChordTypes

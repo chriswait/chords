@@ -43,6 +43,19 @@ export const ARROW_BUTTON_STYLE: CSSProperties = {
   top: "32%",
 };
 
+export const HEADER_FLEX_STYLE = (breakpoint: string) => {
+  return {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: SPACING,
+    ...(breakpoint === "xs" || breakpoint === "sm"
+      ? {
+          justifyContent: "center",
+        }
+      : {}),
+  } as CSSProperties;
+};
+
 export const BREAKPOINTS = {
   xs: 0,
   sm: 576,
@@ -50,4 +63,12 @@ export const BREAKPOINTS = {
   lg: 992,
   xl: 1200,
   xxl: 1400,
+};
+
+export const DEFAULT_CHORD_TYPES = ["major", "minor", "maj7", "7", "m7"];
+export const ENHARMONICS: Record<string, string> = {
+  "C#": "Db",
+  Db: "C#",
+  "F#": "Gb",
+  Gb: "F#",
 };
