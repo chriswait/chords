@@ -23,6 +23,17 @@ import ChordsGrid from "./ChordsGrid";
 
 const instruments: Record<InstrumentName, Instrument> = { ukulele, guitar };
 
+const Container = ({ children }: { children: React.ReactNode }) => (
+  <div style={{ padding: SPACING * 4 }}>{children}</div>
+);
+
+const ChordHeading = ({ chord }: { chord: Chord }) => (
+  <h2 style={{ textAlign: "center", fontSize: 32 }}>
+    {chord.key}
+    <span style={{ fontSize: 20 }}>{chord.suffix}</span>
+  </h2>
+);
+
 function App() {
   const { breakpoint } = useBreakpoint(BREAKPOINTS, "xl");
 
@@ -64,169 +75,165 @@ function App() {
 
   return (
     <>
-      <header
+      <Button
+        disabled={!showChordBook && chordBook.length === 0}
+        onClick={() => setShowChordBook(!showChordBook)}
+        secondary
         style={{
-          marginBottom: SPACING * 2,
-          padding: SPACING * 2,
+          position: "fixed",
+          right: SPACING,
+          zIndex: 1,
+          ...(breakpoint === "xs" || breakpoint === "sm"
+            ? { bottom: SPACING * 2 }
+            : { top: SPACING * 2 }),
         }}
       >
-        <Button
-          onClick={() => setShowChordBook(true)}
-          style={{
-            position: "fixed",
-            right: SPACING,
-            zIndex: 1,
-            ...(breakpoint === "xs" || breakpoint === "sm"
-              ? { bottom: SPACING * 2 }
-              : { top: SPACING * 2 }),
-          }}
-        >
-          Show Book ({chordBook.length})
-        </Button>
-        <div
-          style={{
-            display: "grid",
-            ...(breakpoint === "xs" || breakpoint === "sm"
-              ? { textAlign: "center", rowGap: SPACING * 2 }
-              : {
-                  gridTemplateColumns: "140px auto",
-                  gridTemplateRows: "repeat(3, auto)",
-                  alignItems: "flex-start",
-                  rowGap: SPACING * 3,
-                }),
-            columnGap: SPACING * 2,
-          }}
-        >
-          <h2>Instrument</h2>
-          <div
-            style={{
-              ...HEADER_FLEX_STYLE(breakpoint),
-            }}
-          >
-            {(Object.keys(instruments) as InstrumentName[]).map(
-              (eachInstrumentName) => (
-                <Button
-                  key={eachInstrumentName}
-                  onClick={() => setInstrumentName(eachInstrumentName)}
-                  isSelected={instrumentName === eachInstrumentName}
+        {!showChordBook ? `Show Book (${chordBook.length})` : "Close"}
+      </Button>
+      {!showChordBook ? (
+        <main>
+          <Container>
+            <header style={{ marginBottom: SPACING * 4 }}>
+              <div
+                style={{
+                  display: "grid",
+                  ...(breakpoint === "xs" || breakpoint === "sm"
+                    ? { textAlign: "center", rowGap: SPACING * 2 }
+                    : {
+                        gridTemplateColumns: "140px auto",
+                        gridTemplateRows: "repeat(3, auto)",
+                        alignItems: "flex-start",
+                        rowGap: SPACING * 3,
+                      }),
+                  columnGap: SPACING * 2,
+                }}
+              >
+                <h2>Instrument</h2>
+                <div
+                  style={{
+                    ...HEADER_FLEX_STYLE(breakpoint),
+                  }}
                 >
-                  {titleCaseString(eachInstrumentName)}
-                </Button>
-              )
-            )}
-          </div>
-          <h2>Root</h2>
-          <div
-            style={{
-              ...HEADER_FLEX_STYLE(breakpoint),
-            }}
-          >
-            {selectedInstrument.keys.map((keyRoot: string) => (
-              <Button
-                key={keyRoot}
-                onClick={() => setRoot(keyRoot)}
-                isSelected={root === keyRoot}
-              >
-                {keyRoot}
-              </Button>
-            ))}
-          </div>
-          <h2>Chords</h2>
-          <div
-            style={{
-              ...HEADER_FLEX_STYLE(breakpoint),
-            }}
-          >
-            {(showAllChordTypes
-              ? selectedInstrument.suffixes
-              : DEFAULT_CHORD_TYPES
-            ).map((suffix: string) => (
-              <Button
-                key={suffix}
-                onClick={() =>
-                  setChordTypes(
-                    chordTypes.includes(suffix)
-                      ? [...chordTypes.filter((type) => type !== suffix)]
-                      : [...chordTypes, suffix]
-                  )
-                }
-                isSelected={chordTypes.includes(suffix)}
-              >
-                {suffix}
-              </Button>
-            ))}
-            {showAllChordTypes ? (
-              <Button onClick={() => setShowAllChordTypes(false)}>Less</Button>
-            ) : (
-              <Button onClick={() => setShowAllChordTypes(true)}>More</Button>
-            )}
-          </div>
-        </div>
-      </header>
-      <main>
-        <ChordsGrid>
-          {selectedChords
-            ?.filter((chord) => chordTypes.includes(chord.suffix))
-            .map((chord) => {
-              return (
-                <div key={chord.key + chord.suffix}>
-                  <h2 style={{ textAlign: "center", fontSize: 32 }}>
-                    {chord.key}
-                    <span style={{ fontSize: 20 }}>{chord.suffix}</span>
-                  </h2>
-                  <ChordPositions
-                    chord={chord}
-                    instrumentWithTunings={instrumentWithTunings}
-                    handleAddToBook={(chord, positionIndex) => {
-                      setChordBook([...chordBook, { chord, positionIndex }]);
-                    }}
-                    chordPositionIsInBook={chordPositionIsInBook}
-                  />
+                  {(Object.keys(instruments) as InstrumentName[]).map(
+                    (eachInstrumentName) => (
+                      <Button
+                        key={eachInstrumentName}
+                        onClick={() => setInstrumentName(eachInstrumentName)}
+                        isSelected={instrumentName === eachInstrumentName}
+                      >
+                        {titleCaseString(eachInstrumentName)}
+                      </Button>
+                    )
+                  )}
                 </div>
-              );
-            })}
-        </ChordsGrid>
-      </main>
-      <dialog
-        open={showChordBook}
-        style={{ top: 0, width: "100%", height: "100vh" }}
-      >
-        <h1>Chord Book</h1>
-        <Button
-          style={{
-            position: "absolute",
-            right: SPACING * 2,
-            top: SPACING * 2,
-          }}
-          onClick={() => setShowChordBook(false)}
-        >
-          Close
-        </Button>
-        <ChordsGrid>
-          {chordBook.map(({ chord, positionIndex }, index) => (
-            <div key={`${chord.key}-${chord.suffix}-${positionIndex}-${index}`}>
-              <h2 style={{ textAlign: "center" }}>
-                {chord.key}
-                <span style={{ fontSize: 18 }}>{chord.suffix}</span>
-              </h2>
-              <Chord
-                chord={chord.positions[positionIndex]}
-                instrument={instrumentWithTunings}
-                lite
-              />
-              <Button
-                onClick={() =>
-                  setChordBook(
-                    chordBook.filter((_, bookIndex) => index !== bookIndex)
-                  )
-                }
-              >
-                Remove
-              </Button>
-            </div>
-          ))}
-        </ChordsGrid>
-      </dialog>
+                <h2>Root</h2>
+                <div
+                  style={{
+                    ...HEADER_FLEX_STYLE(breakpoint),
+                  }}
+                >
+                  {selectedInstrument.keys.map((keyRoot: string) => (
+                    <Button
+                      key={keyRoot}
+                      onClick={() => setRoot(keyRoot)}
+                      isSelected={root === keyRoot}
+                    >
+                      {keyRoot}
+                    </Button>
+                  ))}
+                </div>
+                <h2>Chords</h2>
+                <div
+                  style={{
+                    ...HEADER_FLEX_STYLE(breakpoint),
+                  }}
+                >
+                  {(showAllChordTypes
+                    ? selectedInstrument.suffixes
+                    : DEFAULT_CHORD_TYPES
+                  ).map((suffix: string) => (
+                    <Button
+                      key={suffix}
+                      onClick={() =>
+                        setChordTypes(
+                          chordTypes.includes(suffix)
+                            ? [...chordTypes.filter((type) => type !== suffix)]
+                            : [...chordTypes, suffix]
+                        )
+                      }
+                      isSelected={chordTypes.includes(suffix)}
+                    >
+                      {suffix}
+                    </Button>
+                  ))}
+                  <Button
+                    text
+                    onClick={() => setShowAllChordTypes(!showAllChordTypes)}
+                  >
+                    {showAllChordTypes ? "Less" : "More"}
+                  </Button>
+                </div>
+              </div>
+            </header>
+            <ChordsGrid>
+              {selectedChords
+                ?.filter((chord) => chordTypes.includes(chord.suffix))
+                .map((chord) => {
+                  return (
+                    <div key={chord.key + chord.suffix}>
+                      <ChordHeading chord={chord} />
+                      <ChordPositions
+                        chord={chord}
+                        instrumentWithTunings={instrumentWithTunings}
+                        handleAddToBook={(chord, positionIndex) => {
+                          setChordBook([
+                            ...chordBook,
+                            { chord, positionIndex },
+                          ]);
+                        }}
+                        chordPositionIsInBook={chordPositionIsInBook}
+                      />
+                    </div>
+                  );
+                })}
+            </ChordsGrid>
+          </Container>
+        </main>
+      ) : (
+        <dialog open style={{ width: "100%" }}>
+          <Container>
+            <h1 style={{ marginBottom: SPACING * 2 }}>Chord Book</h1>
+            <ChordsGrid>
+              {chordBook.map(({ chord, positionIndex }, index) => (
+                <div
+                  key={`${chord.key}-${chord.suffix}-${positionIndex}-${index}`}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
+                  <ChordHeading chord={chord} />
+                  <Chord
+                    chord={chord.positions[positionIndex]}
+                    instrument={instrumentWithTunings}
+                    lite
+                  />
+                  <Button
+                    onClick={() =>
+                      setChordBook(
+                        chordBook.filter((_, bookIndex) => index !== bookIndex)
+                      )
+                    }
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))}
+            </ChordsGrid>
+          </Container>
+        </dialog>
+      )}
     </>
   );
 }

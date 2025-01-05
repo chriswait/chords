@@ -5,10 +5,9 @@ const ChordsGrid = ({ children }: { children: React.ReactNode }) => {
     <div
       style={{
         ...CARD_STYLE,
-        margin: SPACING * 2,
         padding: SPACING * 2,
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+        gridTemplateColumns: "repeat(auto-fit, minmax(150px, 280px))",
         gridAutoRows: "auto",
         columnGap: SPACING * 2,
         rowGap: SPACING * 4,

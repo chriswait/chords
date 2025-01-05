@@ -34,7 +34,7 @@ const ChordPositions = ({
           style={{
             ...ARROW_BUTTON_STYLE,
             position: "relative",
-            left: SPACING * 1,
+            left: SPACING * 2,
           }}
           onClick={() => setIndex(index - 1)}
           disabled={index <= 0}
@@ -50,7 +50,7 @@ const ChordPositions = ({
           style={{
             ...ARROW_BUTTON_STYLE,
             position: "relative",
-            right: SPACING * 1,
+            right: SPACING * 2,
           }}
           onClick={() => setIndex(index + 1)}
           disabled={index >= chord.positions.length - 1}

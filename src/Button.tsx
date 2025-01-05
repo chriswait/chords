@@ -1,7 +1,11 @@
 import { ButtonHTMLAttributes, DetailedHTMLProps } from "react";
 import { COLORS, RADIUS, SPACING } from "./util";
 
-type MyButtonType = { isSelected?: boolean } & DetailedHTMLProps<
+type MyButtonType = {
+  isSelected?: boolean;
+  secondary?: boolean;
+  text?: boolean;
+} & DetailedHTMLProps<
   ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
 >;
@@ -22,13 +26,34 @@ const SELECTED_STYLE = {
   fontWeight: "bold",
 };
 
-const Button = ({ style, isSelected = false, ...rest }: MyButtonType) => {
-  const backgroundColor = rest.disabled
-    ? "#ffdace"
+const Button = ({
+  style,
+  isSelected = false,
+  secondary = false,
+  text = false,
+  ...rest
+}: MyButtonType) => {
+  const computedStyle = rest.disabled
+    ? {
+        backgroundColor: "#ffdace",
+        color: "grey",
+      }
     : isSelected
-    ? "rgb(240 98 60)"
-    : "#ffbda8";
-  const color = rest.disabled ? "grey" : isSelected ? "white" : COLORS.text;
+    ? {
+        backgroundColor: "rgb(240 98 60)",
+        color: "white",
+      }
+    : secondary
+    ? {
+        backgroundColor: "#4c4e99",
+        color: "white",
+      }
+    : text
+    ? {}
+    : {
+        backgroundColor: "#ffbda8",
+        color: COLORS.text,
+      };
 
   return (
     <button
@@ -36,8 +61,7 @@ const Button = ({ style, isSelected = false, ...rest }: MyButtonType) => {
       style={{
         ...BUTTON_STYLE,
         ...(isSelected ? SELECTED_STYLE : {}),
-        backgroundColor,
-        color,
+        ...computedStyle,
         ...style,
       }}
       {...rest}
