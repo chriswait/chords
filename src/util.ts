@@ -42,3 +42,12 @@ export const ARROW_BUTTON_STYLE: CSSProperties = {
   paddingBottom: 20,
   top: "32%",
 };
+
+export const BREAKPOINTS = {
+  xs: 0,
+  sm: 576,
+  md: 768,
+  lg: 992,
+  xl: 1200,
+  xxl: 1400,
+};

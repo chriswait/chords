@@ -2,46 +2,16 @@ import { useState } from "react";
 import guitar from "@tombatossals/chords-db/lib/guitar";
 import ukulele from "@tombatossals/chords-db/lib/ukulele";
 import Chord from "@tombatossals/react-chords/lib/Chord";
-import useBreakpoint from "use-breakpoint";
 
 import { InstrumentName, InstrumentWithTunings } from "./types";
 import ChordPositions from "./ChordPositions";
 import Button from "./Button";
-import { CARD_STYLE, SPACING, titleCaseString } from "./util";
-
-const BREAKPOINTS = { xs: 0, sm: 576, md: 768, lg: 992, xl: 1200, xxl: 1400 };
+import { SPACING, titleCaseString } from "./util";
+import ChordsGrid from "./ChordsGrid";
 
 const instruments: Record<InstrumentName, Instrument> = { ukulele, guitar };
 
 const DEFAULT_CHORD_TYPES = ["major", "minor", "maj7", "7", "m7"];
-
-const ChordsGrid = ({ children }: { children: React.ReactNode }) => {
-  const { breakpoint } = useBreakpoint(BREAKPOINTS, "xl");
-  return (
-    <div
-      style={{
-        ...CARD_STYLE,
-        margin: SPACING * 2,
-        padding: SPACING * 2,
-        display: "grid",
-        gridTemplateColumns: `repeat(${
-          breakpoint === "xs"
-            ? 1
-            : breakpoint === "sm"
-            ? 2
-            : breakpoint === "md"
-            ? 3
-            : breakpoint === "lg"
-            ? 4
-            : 6
-        }, 1fr)`,
-        gap: SPACING * 2,
-      }}
-    >
-      {children}
-    </div>
-  );
-};
 
 function App() {
   const [instrumentName, setInstrumentName] =
@@ -55,7 +25,8 @@ function App() {
     }
   );
   const [root, setRoot] = useState("C");
-  const selectedChords = selectedInstrument.chords[root];
+  const rootReplaced = root.replace("#", "sharp");
+  const selectedChords = selectedInstrument.chords[rootReplaced];
 
   const [showAllChordTypes, setShowAllChordTypes] = useState(false);
   const [chordTypes, setChordTypes] = useState(DEFAULT_CHORD_TYPES);
@@ -177,7 +148,7 @@ function App() {
       <main>
         <ChordsGrid>
           {selectedChords
-            .filter((chord) => chordTypes.includes(chord.suffix))
+            ?.filter((chord) => chordTypes.includes(chord.suffix))
             .map((chord) => {
               return (
                 <div
