@@ -15,6 +15,7 @@ const BUTTON_STYLE = {
   fontSize: 20,
   border: "none",
   outline: "none",
+  cursor: "pointer",
 };
 
 const SELECTED_STYLE = {

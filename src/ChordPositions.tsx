@@ -23,11 +23,18 @@ const ChordPositions = ({
   const [index, setIndex] = useState(0);
   return (
     <>
-      <div style={{ position: "relative" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-around",
+        }}
+      >
         <button
           style={{
             ...ARROW_BUTTON_STYLE,
-            left: SPACING / 2,
+            position: "relative",
+            left: SPACING * 1,
           }}
           onClick={() => setIndex(index - 1)}
           disabled={index <= 0}
@@ -42,7 +49,8 @@ const ChordPositions = ({
         <button
           style={{
             ...ARROW_BUTTON_STYLE,
-            right: SPACING,
+            position: "relative",
+            right: SPACING * 1,
           }}
           onClick={() => setIndex(index + 1)}
           disabled={index >= chord.positions.length - 1}

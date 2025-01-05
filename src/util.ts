@@ -28,19 +28,18 @@ export const CARD_STYLE = {
 };
 
 export const ARROW_BUTTON_STYLE: CSSProperties = {
-  position: "absolute",
+  paddingLeft: SPACING,
+  paddingRight: SPACING,
+  paddingTop: SPACING * 2,
+  paddingBottom: SPACING * 2,
+  borderRadius: RADIUS,
+  cursor: "pointer",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  borderRadius: RADIUS,
   border: "none",
   outline: "none",
   backgroundColor: COLORS.text,
-  paddingLeft: 10,
-  paddingRight: 10,
-  paddingTop: 20,
-  paddingBottom: 20,
-  top: "32%",
 };
 
 export const HEADER_FLEX_STYLE = (breakpoint: string) => {

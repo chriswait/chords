@@ -1,8 +1,6 @@
-import useBreakpoint from "use-breakpoint";
-import { BREAKPOINTS, CARD_STYLE, SPACING } from "./util";
+import { CARD_STYLE, SPACING } from "./util";
 
 const ChordsGrid = ({ children }: { children: React.ReactNode }) => {
-  const { breakpoint } = useBreakpoint(BREAKPOINTS, "xl");
   return (
     <div
       style={{
@@ -10,18 +8,10 @@ const ChordsGrid = ({ children }: { children: React.ReactNode }) => {
         margin: SPACING * 2,
         padding: SPACING * 2,
         display: "grid",
-        gridTemplateColumns: `repeat(${
-          breakpoint === "xs"
-            ? 1
-            : breakpoint === "sm"
-            ? 2
-            : breakpoint === "md"
-            ? 3
-            : breakpoint === "lg"
-            ? 4
-            : 6
-        }, 1fr)`,
-        gap: SPACING * 2,
+        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+        gridAutoRows: "auto",
+        columnGap: SPACING * 2,
+        rowGap: SPACING * 4,
       }}
     >
       {children}

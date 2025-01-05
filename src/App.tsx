@@ -131,7 +131,7 @@ function App() {
               </Button>
             ))}
           </div>
-          <h2>Types</h2>
+          <h2>Chords</h2>
           <div
             style={{
               ...HEADER_FLEX_STYLE(breakpoint),
@@ -169,12 +169,7 @@ function App() {
             ?.filter((chord) => chordTypes.includes(chord.suffix))
             .map((chord) => {
               return (
-                <div
-                  key={chord.key + chord.suffix}
-                  style={{
-                    padding: SPACING,
-                  }}
-                >
+                <div key={chord.key + chord.suffix}>
                   <h2 style={{ textAlign: "center", fontSize: 32 }}>
                     {chord.key}
                     <span style={{ fontSize: 20 }}>{chord.suffix}</span>
